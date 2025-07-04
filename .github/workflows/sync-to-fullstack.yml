@@ -7,20 +7,26 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout backend
+      - name: Checkout backend repo
         uses: actions/checkout@v3
 
-      - name: Clone fullstack repo and sync
+      - name: Clone fullstack repo
         env:
           GH_TOKEN: ${{ secrets.FULLSTACK_TOKEN }}
         run: |
           git config --global user.name "marsaldaffa"
           git config --global user.email "marsaldaffa1@gmail.com"
-          git clone https://x-access-token:${GH_TOKEN}@github.com/marsaldaffa/fullstack.git
+
+          # Clone fullstack into a separate folder
+          git clone https://x-access-token:${GH_TOKEN}@github.com/marsaldaffa/fullstack.git fullstack
+
+          # Replace backend folder inside fullstack
+          rm -rf fullstack/backend
+          cp -r . fullstack/backend
+
           cd fullstack
-          rm -rf backend
-          cp -r ../backend ./backend
           git add backend
           git commit -m "Sync: update backend from standalone repo" || echo "No changes"
           git push origin main
