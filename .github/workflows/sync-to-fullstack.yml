@@ -15,8 +15,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.FULLSTACK_TOKEN }}
         run: |
-          git config --global user.name "Sync Bot"
-          git config --global user.email "bot@example.com"
+          git config --global user.name "marsaldaffa"
+          git config --global user.email "marsaldaffa1@gmail.com"
           git clone https://x-access-token:${GH_TOKEN}@github.com/marsaldaffa/fullstack.git
           cd fullstack
           rm -rf backend
