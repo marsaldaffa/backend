@@ -1,38 +1,57 @@
-name: Sync Backend to Fullstack
+name: Sync Frontend to Fullstack
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   sync:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout backend repo
+      - name: Checkout frontend repo
         uses: actions/checkout@v3
 
-      - name: Clone fullstack repo and sync backend
+      - name: Clone fullstack repo and sync frontend
         env:
           GH_TOKEN: ${{ secrets.FULLSTACK_TOKEN }}
         run: |
           git config --global user.name "marsaldaffa"
           git config --global user.email "marsaldaffa1@gmail.com"
 
-          # Clone fullstack into ./fullstack
+          # Get latest commit info from frontend repo
+          AUTHOR_NAME=$(git log -1 --pretty="%an")
+          AUTHOR_EMAIL=$(git log -1 --pretty="%ae")
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+
+          echo "🔁 Commit: $COMMIT_MSG"
+          echo "👤 $AUTHOR_NAME <$AUTHOR_EMAIL>"
+
+          # Clone fullstack repo
           git clone https://x-access-token:${GH_TOKEN}@github.com/marsaldaffa/fullstack.git fullstack
 
-          # Use a temporary folder outside current directory to avoid cp loop
-          temp_dir=$(mktemp -d)
-          cp -r . "$temp_dir"
+          # Replace frontend folder
+          rm -rf fullstack/frontend
+          mkdir -p fullstack/frontend
 
-          # Remove old backend folder inside fullstack
-          rm -rf fullstack/backend
-
-          # Move the copied backend code into fullstack/backend
-          mv "$temp_dir" fullstack/backend
+          shopt -s dotglob
+          for file in *; do
+            if [[ "$file" != "fullstack" && "$file" != ".git" ]]; then
+              cp -r "$file" fullstack/frontend/
+            fi
+          done
 
           cd fullstack
-          git add backend
-          git commit -m "Sync: update backend from standalone repo" || echo "No changes"
+
+          git rm -r --cached frontend > /dev/null 2>&1 || true
+          git add frontend
+
+          # Restore commit author and message
+          git config user.name "$AUTHOR_NAME"
+          git config user.email "$AUTHOR_EMAIL"
+
+          git commit -m "$COMMIT_MSG" || echo "⚠️ No changes to commit"
           git push origin main
+
+          echo "✅ Synced successfully to fullstack/frontend"
