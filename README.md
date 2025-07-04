@@ -8,6 +8,10 @@ Install ```python-3.7.2``` and ```python-pip```. Follow the steps from the below
 Reference: [https://docs.python-guide.org/starting/installation/](https://docs.python-guide.org/starting/installation/)
 
 #### 2. Install MySQL
+#### 2. Install MySQL
+#### 2. Install MySQL
+#### 2. Install MySQL
+#### 2. Install MySQL
 Install ```mysql-8.0.15```. Follow the steps form the below reference document based on your Operating System.
 Reference: [https://dev.mysql.com/doc/refman/5.5/en/](https://dev.mysql.com/doc/refman/5.5/en/)
 #### 3. Setup virtual environment
