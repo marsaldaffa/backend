@@ -1,0 +1,26 @@
+name: Sync Backend to Fullstack
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout backend
+        uses: actions/checkout@v3
+
+      - name: Clone fullstack repo and sync
+        env:
+          GH_TOKEN: ${{ secrets.FULLSTACK_TOKEN }}
+        run: |
+          git config --global user.name "Sync Bot"
+          git config --global user.email "bot@example.com"
+          git clone https://x-access-token:${GH_TOKEN}@github.com/YOUR_ORG/fullstack.git
+          cd fullstack
+          rm -rf backend
+          cp -r ../backend ./backend
+          git add backend
+          git commit -m "Sync: update backend from standalone repo" || echo "No changes"
+          git push origin main
