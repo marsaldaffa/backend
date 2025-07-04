@@ -1,4 +1,4 @@
-name: Sync Frontend to Fullstack
+name: Sync Backend to Fullstack
 
 on:
   push:
@@ -10,17 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout frontend repo
+      - name: Checkout backend repo
         uses: actions/checkout@v3
 
-      - name: Clone fullstack repo and sync frontend
+      - name: Clone fullstack repo and sync backend
         env:
           GH_TOKEN: ${{ secrets.FULLSTACK_TOKEN }}
         run: |
           git config --global user.name "marsaldaffa"
           git config --global user.email "marsaldaffa1@gmail.com"
 
-          # Get latest commit info from frontend repo
+          # Get latest commit info from backend repo
           AUTHOR_NAME=$(git log -1 --pretty="%an")
           AUTHOR_EMAIL=$(git log -1 --pretty="%ae")
           COMMIT_MSG=$(git log -1 --pretty=%B)
@@ -31,21 +31,21 @@ jobs:
           # Clone fullstack repo
           git clone https://x-access-token:${GH_TOKEN}@github.com/marsaldaffa/fullstack.git fullstack
 
-          # Replace frontend folder
-          rm -rf fullstack/frontend
-          mkdir -p fullstack/frontend
+          # Replace backend folder
+          rm -rf fullstack/backend
+          mkdir -p fullstack/backend
 
           shopt -s dotglob
           for file in *; do
             if [[ "$file" != "fullstack" && "$file" != ".git" ]]; then
-              cp -r "$file" fullstack/frontend/
+              cp -r "$file" fullstack/backend/
             fi
           done
 
           cd fullstack
 
-          git rm -r --cached frontend > /dev/null 2>&1 || true
-          git add frontend
+          git rm -r --cached backend > /dev/null 2>&1 || true
+          git add backend
 
           # Restore commit author and message
           git config user.name "$AUTHOR_NAME"
@@ -54,4 +54,4 @@ jobs:
           git commit -m "$COMMIT_MSG" || echo "⚠️ No changes to commit"
           git push origin main
 
-          echo "✅ Synced successfully to fullstack/frontend"
+          echo "✅ Synced successfully to fullstack/backend"
