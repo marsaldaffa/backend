@@ -22,15 +22,15 @@ jobs:
           # Clone fullstack into ./fullstack
           git clone https://x-access-token:${GH_TOKEN}@github.com/marsaldaffa/fullstack.git fullstack
 
-          # Create a temporary copy of backend repo
-          mkdir backend-copy
-          cp -r . backend-copy
+          # Use a temporary folder outside current directory to avoid cp loop
+          temp_dir=$(mktemp -d)
+          cp -r . "$temp_dir"
 
-          # Remove old backend folder in fullstack
+          # Remove old backend folder inside fullstack
           rm -rf fullstack/backend
 
-          # Move the copied backend repo into fullstack
-          mv backend-copy fullstack/backend
+          # Move the copied backend code into fullstack/backend
+          mv "$temp_dir" fullstack/backend
 
           cd fullstack
           git add backend
