@@ -8,6 +8,8 @@ cryptography==2.5
 cryptographys==2.5
 Django==1.11.29
 django-haystack==2.8.1
+django-haystack==2.8.1
+django-haystack==2.8.1
 django-phonenumber-field==2.2.0
 enum34==1.1.6
 et-xmlfile==1.0.1
